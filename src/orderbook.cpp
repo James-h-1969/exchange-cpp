@@ -7,6 +7,9 @@ OrderBook::OrderBook(OrderBookMeta order_book_meta) {
 OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& request) {
     // MATCH AGAINST OPPOSITE SIDE
     uint64_t remaining_volume = request.volume;
+    while (remaining_volume > 0) {
+        int64_t price = 0;
+    }
 
     // DEAL WITH REMAINING VOLUME
     if (remaining_volume > 0) {
