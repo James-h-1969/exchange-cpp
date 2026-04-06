@@ -1,0 +1,31 @@
+name: C/C++ CI
+
+# This triggers the workflow on pushes and pull requests to the main branch
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    # Runs on the latest Ubuntu environment provided by GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Check out the code from your repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 2. Run CMake configuration (downloads gtest and generates Makefiles)
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -S ${{github.workspace}}
+
+    # 3. Compile the core library, main app, and unit tests
+    - name: Build Project
+      run: cmake --build ${{github.workspace}}/build
+
+    # 4. Run the unit tests using CTest
+    - name: Run Unit Tests
+      working-directory: ${{github.workspace}}/build
+      run: ctest --output-on-failure
