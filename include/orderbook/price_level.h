@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <cstdint>
+#include <algorithm>
+#include <iostream>
 
 struct PriceLevelNode {
     uint64_t volume;
@@ -12,9 +14,9 @@ struct PriceLevelNode {
 
 class PriceLevel {  
 public:
-    void insert(PriceLevel* node);
-    uint64_t match(uint64_t volume); 
+    void insert(PriceLevelNode* node);
+    void match(uint64_t* remaining_volume, int16_t* trade_count); 
 private:
-    PriceLevelNode* head = nullptr;
-    PriceLevelNode* tail = nullptr;
+    PriceLevelNode* head_ = nullptr;
+    PriceLevelNode* tail_ = nullptr;
 };

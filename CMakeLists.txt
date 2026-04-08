@@ -11,7 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Compile your source files into a library. 
 # If you add more .cpp files in src/, add them here.
 add_library(OrderbookLib 
-    src/orderbook.cpp
+    src/orderbook/orderbook.cpp
+    src/orderbook/price_level.cpp
 )
 
 # Tell CMake where to find the headers. 

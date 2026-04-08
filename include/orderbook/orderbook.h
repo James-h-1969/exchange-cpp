@@ -1,9 +1,13 @@
 #pragma once 
 
 #include <shared_types.h>
+#include <cstdint>
+#include <set>
+
 #include "request.h"
 #include "response.h"
-#include <cstdint>
+#include "price_level.h"
+#include "helpers.h"
 
 constexpr uint8_t instrument_name_len = 4;
 
@@ -19,4 +23,9 @@ public:
     [[nodiscard]] OrderBookDeleteResponse delete_order(const OrderBookDeleteRequest& request);
 private:
     OrderBookMeta _order_book_meta;
+
+    std::set<int64_t> bids_;
+    std::set<int64_t> asks_;
+
+    std::unordered_map<int64_t, PriceLevel> price_to_price_level_;
 };
