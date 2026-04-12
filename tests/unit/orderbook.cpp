@@ -61,13 +61,13 @@ TEST_F(OrderBookTest, TestSimpleMultiMatchSamePriceLevel) {
         .side=Side::BUY,
     };
     OrderBookInsertRequest request_match = {
-        .order_id=1,
+        .order_id=2,
         .price=10,
         .volume=5,
         .side=Side::SELL,
     };
     OrderBookInsertRequest request_match_2 = {
-        .order_id=1,
+        .order_id=3,
         .price=10,
         .volume=5,
         .side=Side::SELL,
@@ -110,4 +110,76 @@ TEST_F(OrderBookTest, TestSimpleMultiMatchDiffPriceLevel) {
     ASSERT_EQ(response1.out_trade_count, 0);
     ASSERT_EQ(response2.out_trade_count, 0);
     ASSERT_EQ(response3.out_trade_count, 2);
+};
+
+TEST_F(OrderBookTest, TestSimpleDelete) {
+    /*
+    Simple insert and delete to make sure no errors in the program
+    */
+
+    OrderBookInsertRequest request = {
+        .order_id=1,
+        .price=10,
+        .volume=10,
+        .side=Side::BUY,
+    };
+    OrderBookInsertResponse insert_response = orderbook_->insert_order(request);
+
+    OrderBookDeleteRequest delete_request = {
+        .order_id=1,
+    };
+    OrderBookDeleteResponse delete_response = orderbook_->delete_order(delete_request);
+
+    ASSERT_EQ(delete_response.status, 1);
+}
+
+TEST_F(OrderBookTest, TestDeleteWrongId) {
+    /*
+    Simple insert and then delete with an invalid id
+    */
+
+    OrderBookInsertRequest request = {
+        .order_id=1,
+        .price=10,
+        .volume=10,
+        .side=Side::BUY,
+    };
+    OrderBookInsertResponse insert_response = orderbook_->insert_order(request);
+
+    OrderBookDeleteRequest delete_request = {
+        .order_id=2,
+    };
+    OrderBookDeleteResponse delete_response = orderbook_->delete_order(delete_request);
+
+    ASSERT_EQ(delete_response.status, 0);
+}
+
+TEST_F(OrderBookTest, TestDeleteNoVolumeLeft) {
+    /*
+    Test if an insert, then delete, and then new insert comes in that would of matched 
+    with the initial volume, make sure that it has no volume
+    */
+
+    OrderBookInsertRequest request = {
+        .order_id=1,
+        .price=10,
+        .volume=10,
+        .side=Side::BUY,
+    };
+    OrderBookInsertResponse insert_response = orderbook_->insert_order(request);
+
+    OrderBookDeleteRequest delete_request = {
+        .order_id=1,
+    };
+    OrderBookDeleteResponse delete_response = orderbook_->delete_order(delete_request);
+
+    OrderBookInsertRequest request2 = {
+        .order_id=1,
+        .price=10,
+        .volume=10,
+        .side=Side::SELL,
+    };
+    OrderBookInsertResponse insert_response_2 = orderbook_->insert_order(request2);
+
+    ASSERT_EQ(insert_response_2.out_trade_count, 0);
 }

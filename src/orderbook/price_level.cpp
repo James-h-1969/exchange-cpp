@@ -1,8 +1,19 @@
 #include "orderbook/price_level.h"
 
+void PriceLevelNode::remove_from_list() {
+    if (prev != nullptr) {
+        // Not the first node
+        prev->next = next;
+    }
+
+    if (next != nullptr) {
+        // Not the last node
+        next->prev = prev;
+    }
+}
+
 void PriceLevel::insert(PriceLevelNode* node) 
 {
-    std::cout << "INSERTING!\n";
     if (head_ == nullptr) 
     { 
         // List is empty
@@ -14,18 +25,19 @@ void PriceLevel::insert(PriceLevelNode* node)
         node->prev = tail_;
         tail_ = node;
     }
+
+    length++;
 };
 
-void PriceLevel::match(uint64_t* volume, int16_t* trade_count) 
+void PriceLevel::match(uint64_t* volume, int16_t* trade_count, std::unordered_map<uint64_t, RestingOrder> order_id_to_resting_order) 
 {
-    std::cout << "MATCHING\n";
     while (*volume > 0 && head_ != nullptr) 
     {
         PriceLevelNode* head = head_;
-        uint64_t matched_volume = std::min(*volume, head->volume);
+        uint64_t matched_volume = std::min(*volume, order_id_to_resting_order[head->order_id].volume);
 
         // Trade that matched volume (create trade here)
-        head->volume -= matched_volume;
+        order_id_to_resting_order[head->order_id].volume -= matched_volume;
         *volume -= matched_volume;
 
         if (matched_volume > 0) {
@@ -33,7 +45,7 @@ void PriceLevel::match(uint64_t* volume, int16_t* trade_count)
         }
 
         // Pop from front of list 
-        if (head->volume == 0) {
+        if (order_id_to_resting_order[head->order_id].volume == 0) {
             PriceLevelNode* to_delete = head_;
             head_ = head_->next;
             delete to_delete;

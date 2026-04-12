@@ -28,4 +28,7 @@ private:
     std::set<int64_t> asks_;
 
     std::unordered_map<int64_t, PriceLevel> price_to_price_level_;
+
+    std::unordered_map<uint64_t, RestingOrder> order_id_to_resting_order;
+    std::unordered_map<uint64_t, PriceLevelNode*> order_id_to_price_level_node;
 };
