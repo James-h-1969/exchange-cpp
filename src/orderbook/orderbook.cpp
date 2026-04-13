@@ -6,9 +6,9 @@ OrderBook::OrderBook(OrderBookMeta order_book_meta) {
 
 OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& request) {
     uint64_t remaining_volume = request.volume;
-    int16_t trade_count = 0;
+    uint16_t trade_count = 0;
     if (request.side == Side::BUY) { 
-        for (uint64_t opposite_side_price: asks_) {
+        for (int64_t opposite_side_price: asks_) {
             if (opposite_side_price <= request.price && remaining_volume > 0) {
                 price_to_price_level_[opposite_side_price].match(&remaining_volume, &trade_count, order_id_to_resting_order);
             } else {
@@ -16,7 +16,7 @@ OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& re
             }
         }
     } else {
-        for (uint64_t opposite_side_price: bids_) {
+        for (int64_t opposite_side_price: bids_) {
             if (opposite_side_price >= request.price && remaining_volume > 0) {
                 price_to_price_level_[opposite_side_price].match(&remaining_volume, &trade_count, order_id_to_resting_order);
             } else {

@@ -29,7 +29,7 @@ void PriceLevel::insert(PriceLevelNode* node)
     length++;
 };
 
-void PriceLevel::match(uint64_t* volume, int16_t* trade_count, std::unordered_map<uint64_t, RestingOrder> order_id_to_resting_order) 
+void PriceLevel::match(uint64_t* volume, uint16_t* trade_count, std::unordered_map<uint64_t, RestingOrder> order_id_to_resting_order) 
 {
     while (*volume > 0 && head_ != nullptr) 
     {

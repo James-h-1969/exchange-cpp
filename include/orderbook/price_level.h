@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 
 #include "shared_types.h"
 
@@ -18,7 +19,7 @@ struct PriceLevelNode {
 class PriceLevel {  
 public:
     void insert(PriceLevelNode* node);
-    void match(uint64_t* remaining_volume, int16_t* trade_count, std::unordered_map<uint64_t, RestingOrder> order_id_to_resting_order); 
+    void match(uint64_t* remaining_volume, uint16_t* trade_count, std::unordered_map<uint64_t, RestingOrder> order_id_to_resting_order); 
 
     int16_t length = 0;
 private:

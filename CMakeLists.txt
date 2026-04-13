@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.14)
 project(OrderbookProject CXX)
 
-# Require C++17 (or change to 20 if you prefer)
-set(CMAKE_CXX_STANDARD 17)
+# Set the C++ standard to 20
+set(CMAKE_CXX_STANDARD 20)
+
+# Ensure C++20 is actually supported and required
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Disable "extensions" (like gnu++20) to keep code portable
+set(CMAKE_CXX_EXTENSIONS OFF) 
+
 
 # ==========================================
 # 1. CORE LIBRARY
@@ -19,7 +25,11 @@ add_library(OrderbookLib
 # PUBLIC means anything linking to OrderbookLib also gets this include path.
 target_include_directories(OrderbookLib PUBLIC include)
 
-
+if(MSVC)
+    target_compile_options(OrderbookLib PRIVATE /W4 /WX)
+else()
+    target_compile_options(OrderbookLib PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 # ==========================================
 # 2. MAIN EXECUTABLE
 # ==========================================
