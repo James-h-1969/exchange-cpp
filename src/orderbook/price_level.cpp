@@ -30,7 +30,7 @@ void PriceLevel::insert(PriceLevelNode* node)
         tail_ = node;
     }
 
-    length++;
+    length_++;
 };
 
 void PriceLevel::match(
@@ -45,26 +45,25 @@ void PriceLevel::match(
     while (*volume > 0 && head_ != nullptr) 
     {
         PriceLevelNode* head = head_;
-        uint64_t matched_volume = std::min(*volume, order_id_to_resting_order[head->order_id].volume);
+        uint64_t matched_volume = std::min(*volume, order_id_to_resting_order[head->resting_order_id].volume);
 
         // Trade that matched volume (create trade here)
-        order_id_to_resting_order[head->order_id].volume -= matched_volume;
+        order_id_to_resting_order[head->resting_order_id].volume -= matched_volume;
         *volume -= matched_volume;
 
         if (matched_volume > 0) {
             *trade_count += 1;
             Trade t = {
                 .aggressor_order_id=order_id,
-                .passive_order_id=head->order_id,
+                .passive_order_id=head->resting_order_id,
                 .price=price_,
                 .volume=matched_volume
             };
             trades.push_back(t);
-            std::cout << trades.size() << std::endl;
         }
 
         // Pop from front of list 
-        if (order_id_to_resting_order[head->order_id].volume == 0) {
+        if (order_id_to_resting_order[head->resting_order_id].volume == 0) {
             PriceLevelNode* to_delete = head_;
             head_ = head_->next;
             delete to_delete;

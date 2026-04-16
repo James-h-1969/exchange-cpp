@@ -5,11 +5,11 @@ OrderBook::OrderBook(OrderBookMeta order_book_meta) {
 }
 
 OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& request) {
-    uint64_t remaining_volume = request.volume;
-    uint16_t trade_count = 0;
+    u64 remaining_volume = request.volume;
+    u16 trade_count = 0;
     std::vector<Trade> new_trades;
     if (request.side == Side::BUY) { 
-        for (int64_t opposite_side_price: asks_) {
+        for (i64 opposite_side_price: asks_) {
             if (opposite_side_price <= request.price && remaining_volume > 0) {
                 price_to_price_level_[opposite_side_price].match(
                     request.order_id,
@@ -23,7 +23,7 @@ OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& re
             }
         }
     } else {
-        for (int64_t opposite_side_price: bids_) {
+        for (i64 opposite_side_price: bids_) {
             if (opposite_side_price >= request.price && remaining_volume > 0) {
                 price_to_price_level_[opposite_side_price].match(
                     request.order_id,
@@ -87,7 +87,7 @@ OrderBookDeleteResponse OrderBook::delete_order(const OrderBookDeleteRequest& re
 
     price_level->remove_from_list();
 
-    if (price_to_price_level_[resting_order.price].length == 0) {
+    if (price_to_price_level_[resting_order.price].get_length() == 0) {
         price_to_price_level_.erase(resting_order.price);
     }
 

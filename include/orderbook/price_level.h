@@ -1,14 +1,13 @@
 #pragma once 
 
-#include <cstdint>
 #include <algorithm>
-#include <iostream>
 #include <unordered_map>
 
 #include "shared_types.h"
 
-struct PriceLevelNode {
-    uint64_t order_id;
+struct PriceLevelNode 
+{
+    u64 resting_order_id;
 
     PriceLevelNode* next = nullptr; 
     PriceLevelNode* prev = nullptr;
@@ -18,21 +17,26 @@ struct PriceLevelNode {
 
 class PriceLevel {  
 public:
-    PriceLevel(): price_(0) {};
-    PriceLevel(int64_t price): price_(price) {};
+    PriceLevel(): price_(0) {}; // why?
+    PriceLevel(i64 price): price_(price), length_(0) {};
+
     void insert(PriceLevelNode* node);
+
     void match(
-        uint64_t order_id,
-        uint64_t* remaining_volume, 
-        uint16_t* trade_count, 
-        std::unordered_map<uint64_t,
-        RestingOrder> order_id_to_resting_order,
-        std::vector<Trade>& trades
+        u64 order_id,
+        u64* remaining_volume, 
+        u16* trade_count, 
+        std::unordered_map<u64, RestingOrder> order_id_to_resting_order,
+        Trades& trades
     ); 
 
-    int16_t length = 0;
+    u16 get_length() {
+        return length_;
+    }
+
 private:
     PriceLevelNode* head_ = nullptr;
     PriceLevelNode* tail_ = nullptr;
-    int64_t price_;
+    i64 price_;
+    u16 length_;
 };

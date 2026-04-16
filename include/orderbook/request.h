@@ -1,16 +1,17 @@
 #pragma once 
 
-#include <cstdint>
 #include "shared_types.h"
 
-struct OrderBookInsertRequest {
-    uint64_t order_id;
-    int64_t price;
-    uint64_t volume;
+struct OrderBookInsertRequest 
+{
+    u64 order_id;
+    i64 price;
+    u64 volume;
     Side side;
-    uint8_t padding[7];
+    u8 padding[7];
 };
 
-struct OrderBookDeleteRequest {
-    uint64_t order_id;
+struct OrderBookDeleteRequest
+{
+    u64 order_id;
 };
