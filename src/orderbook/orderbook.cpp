@@ -7,10 +7,17 @@ OrderBook::OrderBook(OrderBookMeta order_book_meta) {
 OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& request) {
     uint64_t remaining_volume = request.volume;
     uint16_t trade_count = 0;
+    std::vector<Trade> new_trades;
     if (request.side == Side::BUY) { 
         for (int64_t opposite_side_price: asks_) {
             if (opposite_side_price <= request.price && remaining_volume > 0) {
-                price_to_price_level_[opposite_side_price].match(&remaining_volume, &trade_count, order_id_to_resting_order);
+                price_to_price_level_[opposite_side_price].match(
+                    request.order_id,
+                    &remaining_volume,
+                    &trade_count,
+                    order_id_to_resting_order,
+                    new_trades
+                );
             } else {
                 break;
             }
@@ -18,7 +25,13 @@ OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& re
     } else {
         for (int64_t opposite_side_price: bids_) {
             if (opposite_side_price >= request.price && remaining_volume > 0) {
-                price_to_price_level_[opposite_side_price].match(&remaining_volume, &trade_count, order_id_to_resting_order);
+                price_to_price_level_[opposite_side_price].match(
+                    request.order_id,
+                    &remaining_volume,
+                    &trade_count,
+                    order_id_to_resting_order,
+                    new_trades
+                );
             } else {
                 break;
             }
@@ -41,7 +54,7 @@ OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& re
         if (contains_key(price_to_price_level_, request.price)) {
             price_to_price_level_[request.price].insert(price_level_node);
         } else {
-            PriceLevel price_level = PriceLevel();
+            PriceLevel price_level = PriceLevel(request.price);
             price_level.insert(price_level_node);
             price_to_price_level_[request.price] = price_level;
             if (request.side == Side::BUY) {
@@ -54,7 +67,7 @@ OrderBookInsertResponse OrderBook::insert_order(const OrderBookInsertRequest& re
 
     OrderBookInsertResponse response = {
         .status=1,
-        .out_trades=nullptr,
+        .out_trades=new_trades,
         .out_trade_count=trade_count,
     };
 

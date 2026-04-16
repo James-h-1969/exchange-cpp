@@ -1,11 +1,12 @@
 #pragma once 
 
 #include <cstdint>
+#include <vector>
 #include "shared_types.h"
 
 struct OrderBookInsertResponse {
     uint8_t status;
-    Trade* out_trades;
+    std::vector<Trade> out_trades;
     uint16_t out_trade_count;
 };
 

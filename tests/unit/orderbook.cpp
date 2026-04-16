@@ -11,6 +11,10 @@ class OrderBookTest: public testing::Test {
             orderbook_ = new OrderBook(orderbook_meta);
         }
 
+        ~OrderBookTest() {
+            delete orderbook_;
+        }
+
         OrderBook* orderbook_;
 };
 
@@ -39,7 +43,7 @@ TEST_F(OrderBookTest, TestSimpleMatch) {
         .side=Side::BUY,
     };
     OrderBookInsertRequest request_match = {
-        .order_id=1,
+        .order_id=2,
         .price=10,
         .volume=10,
         .side=Side::SELL,
@@ -48,6 +52,34 @@ TEST_F(OrderBookTest, TestSimpleMatch) {
     ASSERT_EQ(response.out_trade_count, 0);
     OrderBookInsertResponse response_match = orderbook_->insert_order(request_match);
     ASSERT_EQ(response_match.out_trade_count, 1);
+
+    // Check trade
+    ASSERT_EQ(response_match.out_trades.size(), 1);
+    ASSERT_EQ(response_match.out_trades.at(0).volume, 10);
+    ASSERT_EQ(response_match.out_trades.at(0).aggressor_order_id, 2);
+    ASSERT_EQ(response_match.out_trades.at(0).passive_order_id, 1);
+}
+
+TEST_F(OrderBookTest, TestSimpleNoCross) {
+    /*
+    TestSimpleNoCross: insert a buy and sell at prices that dont cross
+    */
+    OrderBookInsertRequest request = {
+        .order_id=1,
+        .price=10,
+        .volume=10,
+        .side=Side::BUY,
+    };
+    OrderBookInsertRequest request_match = {
+        .order_id=2,
+        .price=11,
+        .volume=10,
+        .side=Side::SELL,
+    };
+    OrderBookInsertResponse response = orderbook_->insert_order(request);
+    ASSERT_EQ(response.out_trade_count, 0);
+    OrderBookInsertResponse response_match = orderbook_->insert_order(request_match);
+    ASSERT_EQ(response_match.out_trade_count, 0);
 }
 
 TEST_F(OrderBookTest, TestSimpleMultiMatchSamePriceLevel) {
