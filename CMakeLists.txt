@@ -68,3 +68,27 @@ target_link_libraries(unit_tests PRIVATE
 # Register the tests with CMake's test runner (CTest)
 include(GoogleTest)
 gtest_discover_tests(unit_tests)
+
+# Benchmarking 
+FetchContent_Declare(
+  googlebenchmark
+  GIT_REPOSITORY https://github.com/google/benchmark.git
+  GIT_TAG        v1.8.3
+)
+
+# Disable benchmark's internal tests and installation to speed up your build
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable benchmark tests" FORCE)
+set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "Disable benchmark install" FORCE)
+
+FetchContent_MakeAvailable(googlebenchmark)
+
+# Create the benchmark executable
+# (Assuming you save the benchmark code from the previous example here)
+add_executable(orderbook_benchmark tests/performance/orderbook.cpp)
+
+# Link your core library and the Google Benchmark libraries
+target_link_libraries(orderbook_benchmark PRIVATE 
+    OrderbookLib 
+    benchmark::benchmark 
+    benchmark::benchmark_main # Provides the main() function automatically
+)
