@@ -25,7 +25,7 @@ public:
 private:
     OrderBookMeta _order_book_meta;
 
-    std::set<i64> bids_;
+    std::set<i64, std::greater<i64>> bids_;
     std::set<i64> asks_;
     std::unordered_map<i64, PriceLevel> price_to_price_level_;
     std::unordered_map<u64, RestingOrder> order_id_to_resting_order;

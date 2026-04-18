@@ -26,7 +26,7 @@ public:
         u64 order_id,
         u64* remaining_volume, 
         u16* trade_count, 
-        std::unordered_map<u64, RestingOrder> order_id_to_resting_order,
+        std::unordered_map<u64, RestingOrder>& order_id_to_resting_order,
         Trades& trades
     ); 
 

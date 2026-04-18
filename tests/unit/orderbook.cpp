@@ -113,6 +113,39 @@ TEST_F(OrderBookTest, TestSimpleMultiMatchSamePriceLevel) {
     ASSERT_EQ(response3.out_trade_count, 2);
 }
 
+TEST_F(OrderBookTest, TestInsertBestBidWins) {
+    /*
+    TestSimpleMatch: insert a buy and 2 sells at the same price and make sure they trade
+    */
+    OrderBookInsertRequest request1 = {
+        .order_id=1,
+        .price=10,
+        .volume=10,
+        .side=Side::BUY,
+    };
+    OrderBookInsertRequest request2 = {
+        .order_id=2,
+        .price=11,
+        .volume=5,
+        .side=Side::BUY,
+    };
+    OrderBookInsertRequest request3 = {
+        .order_id=3,
+        .price=10,
+        .volume=5,
+        .side=Side::SELL,
+    };
+    OrderBookInsertResponse response1 = orderbook_->insert_order(request1);
+    OrderBookInsertResponse response2 = orderbook_->insert_order(request2);
+    OrderBookInsertResponse response3 = orderbook_->insert_order(request3);
+
+    ASSERT_EQ(response1.out_trade_count, 0);
+    ASSERT_EQ(response2.out_trade_count, 0);
+    ASSERT_EQ(response3.out_trade_count, 1);
+
+    ASSERT_EQ(response3.out_trades.at(0).passive_order_id, 2);
+}
+
 TEST_F(OrderBookTest, TestSimpleMultiMatchDiffPriceLevel) {
     /*
     TestSimpleMatch: insert a buy and 2 sells at the different prices and make sure they trade
@@ -124,13 +157,13 @@ TEST_F(OrderBookTest, TestSimpleMultiMatchDiffPriceLevel) {
         .side=Side::BUY,
     };
     OrderBookInsertRequest request_match = {
-        .order_id=1,
+        .order_id=2,
         .price=10,
         .volume=5,
         .side=Side::SELL,
     };
     OrderBookInsertRequest request_match_2 = {
-        .order_id=1,
+        .order_id=3,
         .price=8,
         .volume=5,
         .side=Side::SELL,

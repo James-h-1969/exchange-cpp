@@ -37,8 +37,7 @@ void PriceLevel::match(
     uint64_t order_id,
     uint64_t* volume, 
     uint16_t* trade_count,
-    std::unordered_map<uint64_t,
-    RestingOrder> order_id_to_resting_order,
+    std::unordered_map<uint64_t, RestingOrder>& order_id_to_resting_order,
     std::vector<Trade>& trades
 ) 
 {
