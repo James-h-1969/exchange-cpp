@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Disable "extensions" (like gnu++20) to keep code portable
 set(CMAKE_CXX_EXTENSIONS OFF) 
 
+# Exports the compile commands for clang LSP to pick up
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 # ==========================================
 # 1. CORE LIBRARY

@@ -34,10 +34,10 @@ void PriceLevel::insert(PriceLevelNode* node)
 };
 
 void PriceLevel::match(
-    uint64_t order_id,
-    uint64_t* volume, 
-    uint16_t* trade_count,
-    std::unordered_map<uint64_t, RestingOrder>& order_id_to_resting_order,
+    u64 order_id,
+    u64* volume, 
+    u16* trade_count,
+    std::unordered_map<u64, RestingOrder>& order_id_to_resting_order,
     std::vector<Trade>& trades
 ) 
 {
